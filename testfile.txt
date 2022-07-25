@@ -1,0 +1,13 @@
+cur_column=5
+
+cur_line=5
+
+cmd="A"
+
+awk -v FS="\n" -v OFS="" '{ 
+    if ('"$cur_line"' == NR) {
+        old=substr($1,1,'"$cur_column"'-1)
+        new=old"'$cmd'"
+        sub(/.{'"$((cur_column-1))"'}/, new, $1)
+    } print > ".temp_file_of_myvim"
+}' .temp_file_of_myvim

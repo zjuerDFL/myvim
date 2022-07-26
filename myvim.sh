@@ -29,7 +29,7 @@ function get_line_info() {
     # 将第0行的字符数设置为0
     char_line=(0)
     # 获取文件每行字符数
-    for char in `awk -F "" '{print NF}' temp.txt`; do
+    for char in `awk -F "" '{print NF}' .temp_file_of_myvim`; do
         char_line[${#char_line[*]}]=${char}
     done
     # 若最后一行为空行，则将其字符数设置为0
@@ -276,7 +276,8 @@ while :; do
                     # 若无记录需要删除的数量，则默认删除一个字符
                     if [ $number -eq 0 ]; then
                         # 仅在当前行不为空行，且当前位置不为最左端的位置时生效
-                        if [ ${char_line[$cur_line]} -gt 0 ] && [ $cur_column -gt 1 ]; then
+                        if [ ${char_line[$cur_line]} -gt 0 ] \
+                        && [ $cur_column -gt 1 ]; then
                             # 使用awk删除将当前位置左边的字符替换为空字符
                             awk -v FS="" -v OFS="" '{ 
                                 if ("'"$cur_line"'" == NR) {
@@ -292,7 +293,8 @@ while :; do
                         fi
                     else # 若记录了要删除的数字，则删除对应数量的字符
                         # 仅在当前行不为空行，且当前位置不为最左端的位置时生效
-                        if [ ${char_line[$cur_line]} -gt 0 ] && [ $cur_column -gt 1 ]; then
+                        if [ ${char_line[$cur_line]} -gt 0 ] \
+                        && [ $cur_column -gt 1 ]; then
                             while [ $number -gt 0 ]; do
                                 # 使用awk删除将当前位置左边的字符替换为空字符
                                 awk -v FS="" -v OFS="" '{ 
@@ -694,7 +696,8 @@ while :; do
                     if [ $cur_line -gt 1 ]; then
                         cur_line=$((cur_line-1))
                         # 若当前行为空行，则手动将当前位置置为1
-                        if [ ${char_line[$((cur_line+1))]} -eq 0 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                        if [ ${char_line[$((cur_line+1))]} -eq 0 ] \
+                        && [ ${char_line[$cur_line]} -gt 0 ]; then
                             cur_column=1
                         # 若当前行数字符数小于当前位置，则将当前位置设置为最后一个字符
                         elif [ ${char_line[$cur_line]} -lt $cur_column ]; then
@@ -713,7 +716,8 @@ while :; do
                         # 将行数设置为下一行
                         cur_line=$((cur_line+1))
                         # 若当前行为空行，则手动将当前位置置为1
-                        if [ ${char_line[$((cur_line-1))]} -eq 0 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                        if [ ${char_line[$((cur_line-1))]} -eq 0 ] \
+                        && [ ${char_line[$cur_line]} -gt 0 ]; then
                             cur_column=1
                         # 若当前行数字符数小于当前位置，则将当前位置设置为最后一个字符
                         elif [ ${char_line[$cur_line]} -lt $cur_column ]; then
@@ -728,14 +732,16 @@ while :; do
                     ;;
                 "l") # 向右移动
                     # 如果当前列不是最后一列，则向右移动一列
-                    if [ $cur_column -lt ${char_line[$cur_line]} ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                    if [ $cur_column -lt ${char_line[$cur_line]} ] \
+                    && [ ${char_line[$cur_line]} -gt 0 ]; then
                         cur_column=$((cur_column+1)) 
                         printf "\e[${cur_line};${cur_column}H"
                     fi
                     ;;
                 "h") # 向左移动
                     # 如果当前列不是第一列，则向左移动一列
-                    if [ $cur_column -gt 1 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                    if [ $cur_column -gt 1 ] \
+                    && [ ${char_line[$cur_line]} -gt 0 ]; then
                         cur_column=$((cur_column-1))
                         printf "\e[${cur_line};${cur_column}H"
                     fi
@@ -751,7 +757,8 @@ while :; do
                                 if [ $cur_line -gt 1 ]; then
                                     cur_line=$((cur_line-1))
                                     # 若当前行为空行，则手动将当前位置置为1
-                                    if [ ${char_line[$((cur_line+1))]} -eq 0 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                    if [ ${char_line[$((cur_line+1))]} -eq 0 ] \
+                                    && [ ${char_line[$cur_line]} -gt 0 ]; then
                                         cur_column=1
                                     # 若当前行数字符数小于当前位置，则将当前位置设置为最后一个字符
                                     elif [ ${char_line[$cur_line]} -lt $cur_column ]; then
@@ -770,7 +777,8 @@ while :; do
                                     # 将行数设置为下一行
                                     cur_line=$((cur_line+1))
                                     # 若当前行为空行，则手动将当前位置置为1
-                                    if [ ${char_line[$((cur_line-1))]} -eq 0 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                    if [ ${char_line[$((cur_line-1))]} -eq 0 ] \
+                                    && [ ${char_line[$cur_line]} -gt 0 ]; then
                                         cur_column=1
                                     # 若当前行数字符数小于当前位置，则将当前位置设置为最后一个字符
                                     elif [ ${char_line[$cur_line]} -lt $cur_column ]; then
@@ -785,14 +793,16 @@ while :; do
                                 ;;
                             C) # 右键
                                 # 如果当前列不是最后一列，则向右移动一列
-                                if [ $cur_column -lt ${char_line[$cur_line]} ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                if [ $cur_column -lt ${char_line[$cur_line]} ] \
+                                && [ ${char_line[$cur_line]} -gt 0 ]; then
                                     cur_column=$((cur_column+1)) 
                                     printf "\e[${cur_line};${cur_column}H"
                                 fi
                                 ;;
                             D) # 左键
                                 # 如果当前列不是第一列，则向左移动一列
-                                if [ $cur_column -gt 1 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                if [ $cur_column -gt 1 ] \
+                                && [ ${char_line[$cur_line]} -gt 0 ]; then
                                     cur_column=$((cur_column-1))
                                     printf "\e[${cur_line};${cur_column}H"
                                 fi
@@ -826,7 +836,8 @@ while :; do
                                 if [ $cur_line -gt 1 ]; then
                                     cur_line=$((cur_line-1))
                                     # 若当前行为空行，则手动将当前位置置为1
-                                    if [ ${char_line[$((cur_line+1))]} -eq 0 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                    if [ ${char_line[$((cur_line+1))]} -eq 0 ] \
+                                    && [ ${char_line[$cur_line]} -gt 0 ]; then
                                         cur_column=1
                                     # 若当前行数字符数小于当前位置，则将当前位置设置为最后一个字符
                                     elif [ $((${char_line[$cur_line]}+1)) -lt $cur_column ]; then
@@ -845,7 +856,8 @@ while :; do
                                     # 将行数设置为下一行
                                     cur_line=$((cur_line+1))
                                     # 若当前行为空行，则手动将当前位置置为1
-                                    if [ ${char_line[$((cur_line-1))]} -eq 0 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                    if [ ${char_line[$((cur_line-1))]} -eq 0 ] \
+                                    && [ ${char_line[$cur_line]} -gt 0 ]; then
                                         cur_column=1
                                     # 若当前行数字符数小于当前位置，则将当前位置设置为最后一个字符
                                     elif [ $((${char_line[$cur_line]}+1)) -lt $cur_column ]; then
@@ -860,14 +872,16 @@ while :; do
                                 ;;
                             C) # 右键
                                 # 如果当前列不是最后一列，则向右移动一列
-                                if [ $cur_column -lt $((${char_line[$cur_line]}+1)) ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                if [ $cur_column -lt $((${char_line[$cur_line]}+1)) ] \
+                                && [ ${char_line[$cur_line]} -gt 0 ]; then
                                     cur_column=$((cur_column+1)) 
                                     printf "\e[${cur_line};${cur_column}H"
                                 fi
                                 ;;
                             D) # 左键
                                 # 如果当前列不是第一列，则向左移动一列
-                                if [ $cur_column -gt 1 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                if [ $cur_column -gt 1 ] \
+                                && [ ${char_line[$cur_line]} -gt 0 ]; then
                                     cur_column=$((cur_column-1))
                                     printf "\e[${cur_line};${cur_column}H"
                                 fi
@@ -923,7 +937,6 @@ while :; do
                     # 刷新并打印插入模式提示信息
                     print_insert_info
                     ;;
-
                 *) # 在当前位置插入新字符
                     # 在第$cur_line行第$cur_column个字符处插入新字符$cmd
                     awk -v FS="\n" -v OFS="" '{ 
@@ -1050,7 +1063,8 @@ while :; do
                                 if [ $cur_line -gt 1 ]; then
                                     cur_line=$((cur_line-1))
                                     # 若当前行为空行，则手动将当前位置置为1
-                                    if [ ${char_line[$((cur_line+1))]} -eq 0 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                    if [ ${char_line[$((cur_line+1))]} -eq 0 ] \
+                                    && [ ${char_line[$cur_line]} -gt 0 ]; then
                                         cur_column=1
                                     # 若当前行数字符数小于当前位置，则将当前位置设置为最后一个字符
                                     elif [ $((${char_line[$cur_line]}+1)) -lt $cur_column ]; then
@@ -1069,7 +1083,8 @@ while :; do
                                     # 将行数设置为下一行
                                     cur_line=$((cur_line+1))
                                     # 若当前行为空行，则手动将当前位置置为1
-                                    if [ ${char_line[$((cur_line-1))]} -eq 0 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                    if [ ${char_line[$((cur_line-1))]} -eq 0 ] \
+                                    && [ ${char_line[$cur_line]} -gt 0 ]; then
                                         cur_column=1
                                     # 若当前行数字符数小于当前位置，则将当前位置设置为最后一个字符
                                     elif [ $((${char_line[$cur_line]}+1)) -lt $cur_column ]; then
@@ -1084,14 +1099,16 @@ while :; do
                                 ;;
                             C) # 右键
                                 # 如果当前列不是最后一列，则向右移动一列
-                                if [ $cur_column -lt $((${char_line[$cur_line]}+1)) ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                if [ $cur_column -lt $((${char_line[$cur_line]}+1)) ] \
+                                && [ ${char_line[$cur_line]} -gt 0 ]; then
                                     cur_column=$((cur_column+1)) 
                                     printf "\e[${cur_line};${cur_column}H"
                                 fi
                                 ;;
                             D) # 左键
                                 # 如果当前列不是第一列，则向左移动一列
-                                if [ $cur_column -gt 1 ] && [ ${char_line[$cur_line]} -gt 0 ]; then
+                                if [ $cur_column -gt 1 ] \
+                                && [ ${char_line[$cur_line]} -gt 0 ]; then
                                     cur_column=$((cur_column-1))
                                     printf "\e[${cur_line};${cur_column}H"
                                 fi
